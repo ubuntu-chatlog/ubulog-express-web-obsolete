@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax auto url="/function/ubulog-channels" last-response="{{channels}}"></iron-ajax>
+    <iron-ajax auto url="[[rootPath]]function/ubulog-channels" last-response="{{channels}}"></iron-ajax>
     <iron-localstorage name="all-channel-names" value="{{channels}}"></iron-localstorage>
 
 		<app-location
@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <app-route
         route="{{route}}"
-        pattern="[[rootPath]]:page"
+        pattern="[[rootPath]]:page(/:subpage)?"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
@@ -90,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="chart-all" href="[[rootPath]]chart">Chart all channels</a>
           <template is="dom-repeat" items="[[channels]]">
-            <a name="[[item]]" href="[[_getChannelUrl(item)]]">#[[item]]</a>
+            <a name="[[item]]" href="[[rootPath]]channel/[[item]]">#[[item]]</a>
           </template>
         </iron-selector>
       </app-drawer>
@@ -112,7 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
           <!--my-project name="project"></my-project-->
           <my-chart name="chart"></my-chart>
-          <my-channel name="channel" channel="[[subroute.path]]"></my-channel>
+          <my-channel name="channel" channel="[[subpage]]"></my-channel>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </app-header-layout>
@@ -133,6 +133,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						type: String,
 						reflectToAttribute: true,
 						observer: '_pageChanged',
+          },
+          subpage: {
+						type: String,
+						reflectToAttribute: true,
 					},
 					channels: {
 						type: Array,
@@ -140,7 +144,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						value: function() { return []; },
 					},
 					routeData: Object,
-          subroute: String,
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
           rootPath: String,
@@ -149,7 +152,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get observers() {
         return [
-					'_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.page)',
+          '_routeSubpageChanged(routeData.subpage)',
 				];
 			}
 
@@ -163,9 +167,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _pageChanged(page) {
-				// Load page import on demand. Show 404 page if fails
-				const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+      _routeSubpageChanged(subpage) {
+        this.subpage = subpage || '';
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      }
+
+      _importPage(page) {
+        // Load page import on demand. Show 404 page if fails
+        const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
 				Polymer.importHref(
 					resolvedPageUrl,
 					null,
@@ -173,12 +184,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					true);
       }
 
-      _showPage404() {
-        this.page = 'view404';
+      _maybeImportChannel(page) {
+        if (this.channels.includes(this.subroute.path.substr(1))) {
+          this._importPage(page);
+        } else {
+          this._showPage404();
+        }
       }
 
-      _getChannelUrl(channel) {
-        return `${this.rootPath}channel/${channel}`;
+      _pageChanged(page) {
+        if ('channel' === page) {
+          this._maybeImportChannel(page);
+        } else {
+          this._importPage(page);
+        }
+      }
+
+      _subpageChanged(subpage) {
+        if ('channel' === page) {
+          this._maybeImportChannel(page);
+        } else {
+          // no other pages take subpaths right now
+        }
+      }
+
+      _showPage404() {
+        this.page = 'view404';
       }
 		}
 

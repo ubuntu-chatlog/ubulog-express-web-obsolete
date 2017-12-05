@@ -23,14 +23,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       rect.vis-outline {
         fill: none;
       }
+      h1 {
+        text-transform: capitalize;
+      }
     </style>
 
-    <iron-ajax auto url="[[_graphUrl(channel)]]" last-response="[[chartData]]"
+    <iron-ajax auto url="[[rootPath]]function/ubulog-chart" last-response="[[_chartData]]"
       params='{"channel":[[channel]]}' method="get"></iron-ajax>
-    <iron-localstorage name="all-channels-chart-data" value="{{chartData}}"></iron-localstorage>
+    <iron-localstorage name="channel-[[channel]]-chart-data" value="{{_chartData}}"></iron-localstorage>
     
     <div class="card">
-      <h1>[[channel]]</h1>
+      <h1>#[[channel]]</h1>
       <div id="chart"></div>
     </div>
   </template>
@@ -41,21 +44,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
 				return {
-					channel: {
+          channel: {
 						type: String,
+						reflectToAttribute: true,
+						observer: '_pageChanged',
+					},
+          channel: {
+            type: String,
+            value: '',
           },
           _chart: {
 						type: Object,
-						value: false,
-					},
+						value: _ => { return {}; },
+          },
+          _chartData: {
+            type: Object,
+            value: _ => { return {}; },
+            observer: '_updateChart',
+          },
 					rootPath: String,
 				};
       }
-      
-      static get observers() {
-				return [
-					'_updateChart(chartData)',
-				];
+
+      _pageChanged() {
+        this._chart = {};
+        this._chartData = {};
       }
       
       _updateChart(data) {
@@ -69,14 +82,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
 
         if (!!this._chart) {
-            this._chart.setItems(dataset);
+          this._chart.setItems(dataset);
         } else {
-            this._chart = new vis.Graph2d(this.$.chart, dataset, options);
+          this._chart = new vis.Graph2d(this.$.chart, dataset, options);
         }
-      }
-
-      _graphUrl(channel) {
-        return `${this.rootPath}function/ubulog-chart`;
       }
 		}
 

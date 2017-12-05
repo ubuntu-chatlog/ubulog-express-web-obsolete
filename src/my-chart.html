@@ -62,16 +62,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax auto url="/function/ubulog-chart" last-response="{{chartData}}"></iron-ajax>
-    <iron-localstorage name="all-channels-chart-data" value="{{chartData}}"></iron-localstorage>
+    <iron-ajax auto url="[[rootPath]]function/ubulog-chart" last-response="{{_chartData}}"></iron-ajax>
+    <iron-localstorage name="all-channels-chart-data" value="{{_chartData}}"></iron-localstorage>
     
     <div class="card">
       <div id="chart"></div>
 
       <div id="legend">
         <template is="dom-if" if="[[_haveChart(_chart)]]">
-          <iron-ajax auto url="/function/channels" last-response="{{channels}}"></iron-ajax>
-          <iron-localstorage name="all-channel-names" value="{{channels}}"></iron-localstorage>
           <template is="dom-repeat" items="[[channels]]">
             <template is="dom-if" if="[[_haveLegendItem(item)]]">
               <p class="legend-item"><span class$="[[_getLegendClass(item)]]"></span> <span>[[_getLegendLabel(item)]]</span></p>
@@ -91,14 +89,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				return {
 					_chart: {
 						type: Object,
-						value: false,
-					},
+						value: _ => { return {}; },
+          },
+          channels: {
+            type: Array,
+            value: _ => { return []; },
+          },
+          rootPath: String,
 				};
 			}
 
       static get observers() {
 				return [
-					'_updateChart(chartData)',
+					'_updateChart(_chartData)',
 				];
 			}
 
@@ -113,9 +116,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
 
         if (!!this._chart) {
-            this._chart.setItems(dataset);
+          this._chart.setItems(dataset);
         } else {
-            this._chart = new vis.Graph2d(this.$.chart, dataset, options);
+          this._chart = new vis.Graph2d(this.$.chart, dataset, options);
         }
       }
 
