@@ -21,14 +21,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax auto url="[[_graphUrl(channel)]]" last-response="[[graphData]]"
-      params='{"channel":[[channel]]}'></iron-ajax>
-
+    <iron-ajax auto url="[[_graphUrl(channel)]]" last-response="[[chartData]]"
+      params='{"channel":[[channel]]}' method="get"></iron-ajax>
+    <iron-localstorage name="all-channels-chart-data" value="{{chartData}}"></iron-localstorage>
+    
     <div class="card">
-      <div class="circle">2</div>
-      <h1>View Two</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
-      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
+      <h1>[[channel]]</h1>
+      <div id="chart"></div>
     </div>
   </template>
 
@@ -40,10 +39,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 				return {
 					channel: {
 						type: String,
+          },
+          _chart: {
+						type: Object,
+						value: false,
 					},
 					rootPath: String,
 				};
-			}
+      }
+      
+      static get observers() {
+				return [
+					'_updateChart(chartData)',
+				];
+      }
+      
+      _updateChart(data) {
+        const dataset = new vis.DataSet(data);
+
+        const options = {
+          defaultGroup: '',
+          drawPoints: false,
+          start: '2004-01-01',
+          legend: false,
+        };
+
+        if (!!this._chart) {
+            this._chart.setItems(dataset);
+        } else {
+            this._chart = new vis.Graph2d(this.$.chart, dataset, options);
+        }
+      }
 
       _graphUrl(channel) {
         return `${this.rootPath}function/ubulog-chart`;
