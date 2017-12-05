@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <div id="legend">
         <template is="dom-if" if="[[_haveChart(_chart)]]">
-          <iron-ajax auto url="/api/channels" last-response="{{channels}}"></iron-ajax>
+          <iron-ajax auto url="/function/channels" last-response="{{channels}}"></iron-ajax>
           <iron-localstorage name="all-channel-names" value="{{channels}}"></iron-localstorage>
           <template is="dom-repeat" items="[[channels]]">
             <template is="dom-if" if="[[_haveLegendItem(item)]]">

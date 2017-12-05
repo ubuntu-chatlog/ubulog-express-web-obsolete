@@ -21,7 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax auto url="[[_graphUrl(channel)]]" last-response="[[graphData]]"></iron-ajax>
+    <iron-ajax auto url="[[_graphUrl(channel)]]" last-response="[[graphData]]"
+      params='{"channel":[[channel]]}'></iron-ajax>
 
     <div class="card">
       <div class="circle">2</div>
@@ -45,7 +46,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			}
 
       _graphUrl(channel) {
-        return `${this.rootPath}function/ubulog-chart/${channel}`;
+        return `${this.rootPath}function/ubulog-chart`;
       }
 		}
 
