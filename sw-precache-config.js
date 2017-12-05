@@ -25,5 +25,9 @@ module.exports = {
         },
       },
     },
+    {
+      urlPattern: /\/function\//,
+      handler: 'networkFirst',
+    },
   ],
 };
