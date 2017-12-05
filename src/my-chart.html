@@ -135,7 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _getLegendClass(item) {
         window.requestAnimationFrame(function() {
           const i = this._chart.getLegend(item).icon;
-          const el = this.$$(`.legend-icon.${item}`);
+          const el = this.$.legend.querySelector(`.legend-icon.${item}`);
           if (!!i) {
             el.appendChild(i);
           }
