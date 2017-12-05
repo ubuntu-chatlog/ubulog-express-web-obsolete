@@ -5,4 +5,4 @@ services:
     deploy:
       labels:
         - traefik.port=80
-        - traefik.frontend.rule=PathPrefix:/;Host:ubulog.com
+        - traefik.frontend.rule=PathPrefix:/ Host:ubulog.com
