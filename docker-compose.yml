@@ -1,0 +1,8 @@
+version: "3.2"
+services:
+  frontend:
+    image: ubulog/web-frontend
+    deploy:
+      labels:
+        - traefik.port=80
+        - traefik.frontend.rule=PathPrefix:/;Host:ubulog.com
