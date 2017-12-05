@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <iron-ajax auto url="/api/chart" last-response="{{chartData}}"></iron-ajax>
+      <iron-ajax auto url="/function/ubulog-chart" last-response="{{chartData}}"></iron-ajax>
       <iron-localstorage name="all-channels-chart-data" value="{{chartData}}"></iron-localstorage>
       <div id="chart"></div>
 
