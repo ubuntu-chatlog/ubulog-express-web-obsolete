@@ -87,22 +87,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
 				return {
-					_chart: {
-						type: Object,
-						value: _ => { return {}; },
-          },
           channels: {
             type: Array,
             value: _ => { return []; },
           },
+          _chartData: {
+            type: Array,
+            value: _ => { return []; },
+            observer: '_updateChart',
+          },
           rootPath: String,
 				};
-			}
-
-      static get observers() {
-				return [
-					'_updateChart(_chartData)',
-				];
 			}
 
       _updateChart(data) {

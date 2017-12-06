@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-ajax auto url="[[rootPath]]function/ubulog-chart" last-response="[[_chartData]]"
+    <iron-ajax auto url="[[rootPath]]function/ubulog-chart" last-response="{{_chartData}}"
       params='{"channel":[[channel]]}' method="get"></iron-ajax>
     <iron-localstorage name="channel-[[channel]]-chart-data" value="{{_chartData}}"></iron-localstorage>
     
@@ -53,13 +53,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: String,
             value: '',
           },
-          _chart: {
-						type: Object,
-						value: _ => { return {}; },
-          },
           _chartData: {
-            type: Object,
-            value: _ => { return {}; },
+            type: Array,
+            value: _ => { return []; },
             observer: '_updateChart',
           },
 					rootPath: String,
@@ -67,7 +63,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _pageChanged() {
-        this._chart = {};
         this._chartData = {};
       }
       
